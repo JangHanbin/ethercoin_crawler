@@ -1,30 +1,31 @@
 import requests
 from bs4 import BeautifulSoup
-from multiprocessing import Queue
-from xls_saver import ExcelSaver
-
+from datetime import datetime
 
 class Crawler:
 
-    def __init__(self, file_name):
-        self.excel_saver = ExcelSaver(file_name)
-        self.hashs_queue = Queue()
+    def __init__(self, url):
+        self.url = url
+        self.hash_set = set()
 
-    def start(self, url, idx):
-
-        res = requests.get(url,params={'p': idx})
-        if res.status_code ==200:
-            # ContentPlaceHolder1_mainrow > div > div > table > tbody > tr > td > span > a
+    def start(self, hashs_queue, idx):
+        res = requests.get(self.url, params={'p': idx})
+        if res.status_code == 200:
             html = res.text
 
             soup = BeautifulSoup(html, 'html.parser')
 
-            hashes=soup.find_all('span', class_='hash-tag text-truncate')
-            # self.hashs_queue.put(hashes)
-            # the pages displayed Txhash - from order in hash-tag text-truncate
-            # make tuple collection from hashs idx modular
-            # print(hashes)
-            self.excel_saver.save_to_file(hashes, idx)
+            hashs=soup.find_all('span', class_='hash-tag text-truncate')
+            is_first = True
+            for tx_hash, tx_from, tx_to in zip(hashs[0::3], hashs[1::3], hashs[2::3]):
+                # for avoid duplicate
+                if tx_hash.text in self.hash_set:
+                    pass
+                else:
+                    hashs_queue.put([[tx_hash.text, tx_from.text, tx_to.text], idx, datetime.now() if is_first else ''])
+                    self.hash_set.add(tx_hash.text)
+                    is_first = False
+
             return True
 
         elif res.status_code == 404:
@@ -34,5 +35,6 @@ class Crawler:
         else:
             print('Failed to get pages Plz check network status or server. error code : {0}'.format(res.status_code))
             exit(1)
+
 
 
