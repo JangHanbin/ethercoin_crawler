@@ -18,7 +18,7 @@ class Crawler:
     def start(self, hashs_queue, idx):
 
         if idx % 10 ==0:
-            print('trying to get info pages {0}'.format(i))
+            print('trying to get info pages {0}'.format(idx))
         #
         # if idx == 1:
         #     __class__.start_time = time()
