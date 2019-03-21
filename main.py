@@ -2,20 +2,21 @@ from crawler import Crawler
 from xls_saver import ExcelSaver
 from multiprocessing import Pool, Manager
 
-url = 'https://etherscan.io/txs'
 
+URL = 'https://etherscan.io/txs'
+END_OF_PAGE = 50
 if __name__=='__main__':
     print('Start etherscan_crawler....')
-    print('URL : {0}'.format(url))
-
-    pool = Pool(processes=4)
+    print('URL : {0}'.format(URL))
+    #
+    pool = Pool(processes=8)
     manager = Manager()
     hashs_queue = manager.Queue(maxsize=200000)
-    crawler = Crawler(url)
+    crawler = Crawler(URL)
     excel_saver = ExcelSaver('test.xlsx')
 
-    results = list
-    for i in range(1, 100+1):
+    crawler.end_of_page=END_OF_PAGE
+    for i in range(1, END_OF_PAGE+1):
         result = pool.apply_async(crawler.start, (hashs_queue, i))
 
     # for result in results:
