@@ -2,18 +2,26 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from time import time
-from time import sleep
+
+
 class Crawler:
+
+    # #static var
+    # start_time=int()
+    # end_time=int()
 
     def __init__(self, url):
         self.url = url
         self.end_of_page=int()
         self.hash_set = set()
-        self.start_time = int()
-        self.end_time = int()
+
     def start(self, hashs_queue, idx):
-        if idx == 1:
-            self.start_time = time()
+
+        if idx % 10 ==0:
+            print('trying to get info pages {0}'.format(i))
+        #
+        # if idx == 1:
+        #     __class__.start_time = time()
         while True:
             res = requests.get(self.url, params={'p': idx})
             if res.status_code == 200:
@@ -32,8 +40,9 @@ class Crawler:
                         self.hash_set.add(tx_hash.text)
                         is_first = False
 
-                if idx == self.end_of_page:
-                    self.end_time=time()
+                # if idx == self.end_of_page:
+                #     __class__.end_time = time()
+                #     print('Crawler Processing time : {0}'.format(__class__.end_time - __class__.start_time))
 
                 return True
 
@@ -47,6 +56,6 @@ class Crawler:
                 print('Failed to get pages Plz check network status or server. error code : {0}'.format(res.status_code))
                 exit(1)
 
-    def ret_processing_time(self):
-        return self.end_time - self.start_time
+    # def ret_processing_time(self):
+    #     return __class__.end_time - __class__.start_time
 
