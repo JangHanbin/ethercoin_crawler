@@ -19,15 +19,14 @@ if __name__=='__main__':
     crawler = Crawler(url)
     excel_saver = ExcelSaver('test.xlsx')
     start_time = time.time()
-    result = pool.apply_async(crawler.start, (hashs_queue, 1))
+    results = list
+    for i in range(1, 10+1):
+        result = pool.apply_async(crawler.start, (hashs_queue, i))
 
-    # print(result.get().encode(''))
-    #
-    # excel_saver.save_to_file(hashs_queue)
     end_time = time.time()
-    sleep(3)
+    # for result in results:
     if result.get():
-        pass
+        excel_saver.save_to_file(hashs_queue)
     print('Running time : {0}'.format(end_time- start_time))
 
 

@@ -9,6 +9,7 @@ class Crawler:
         self.hash_set = set()
 
     def start(self, hashs_queue, idx):
+        print(idx)
         res = requests.get(self.url, params={'p': idx})
         if res.status_code == 200:
             html = res.text
